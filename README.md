@@ -609,4 +609,4 @@ CREATE TABLE page_config (
 
 ### 许可证
 
-MIT License
+GPLv3
