@@ -258,7 +258,7 @@ goversion/
 
 ### License
 
-MIT License
+GPLv3
 
 ---
 
