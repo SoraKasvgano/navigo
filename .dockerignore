@@ -1,0 +1,46 @@
+# Git相关
+.git
+.gitignore
+.github
+
+# 构建产物
+*.exe
+*.dll
+*.so
+*.dylib
+nav-admin
+nav-admin.exe
+
+# 运行时数据
+data/
+uploads/
+static/nav.json
+
+# 开发工具
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# 日志
+*.log
+
+# 测试
+*_test.go
+test/
+
+# 文档
+*.md
+README.md
+项目指引.md
+
+# Docker相关
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# 其他
+.DS_Store
+tmp/
+.env

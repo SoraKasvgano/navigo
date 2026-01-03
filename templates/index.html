@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="网址导航"/>
+    <link rel="shortcut icon" href="/static/logo.png" type="image/x-icon">
+    <meta name="keywords" content="网址导航" />
+    <title>网址导航</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/themify-icons.css">
+</head>
+<body>
+    <div class="container" id="container">
+        <aside class="left-bar" id="leftBar">
+            <div class="big-logo">
+                <img src="/static/logo.png"/>
+            </div>
+            <div class="ti-sec">
+                <p>常用网址一键直达</p>
+            </div>
+            <div class="title">
+                <p>网址导航</p>
+            </div>
+            <nav class="nav">
+                <ul class="nav-item" id="navItem">
+                </ul>
+            </nav>
+            <div class="fixed-bottom">
+                <div class="calendar">
+                    <div class="calendar-content">
+                        <div class="date-time"></div>
+                        <div class="lunar-calendar">
+                            <div class="lunar-detail-toggle">
+                                <div class="toggle-btn">
+                                    <i class="ti-angle-down"></i>
+                                    <span>详情</span>
+                                </div>
+                            </div>
+                            <div class="lunar-detail-content" style="display: none;">
+                                <div class="lunar-section basic-info">
+                                    <h4>基础信息</h4>
+                                    <div class="lunar-basic">
+                                        <div class="lunar-date"></div>
+                                        <div class="lunar-week"></div>
+                                        <div class="lunar-constellation"></div>
+                                    </div>
+                                </div>
+                                <div class="lunar-section ganzhi-nayin">
+                                    <h4>干支纳音</h4>
+                                    <div class="lunar-ganzhi">
+                                        <div class="ganzhi-item"><span class="label">年：</span><span class="year-ganzhi"></span></div>
+                                        <div class="ganzhi-item"><span class="label">月：</span><span class="month-ganzhi"></span></div>
+                                        <div class="ganzhi-item"><span class="label">日：</span><span class="day-ganzhi"></span></div>
+                                        <div class="ganzhi-item"><span class="label">时：</span><span class="time-ganzhi"></span></div>
+                                    </div>
+                                    <div class="lunar-nayin">
+                                        <div class="nayin-item"><span class="label">纳音：</span><span class="nayin-content"></span></div>
+                                    </div>
+                                </div>
+                                <div class="lunar-section xingsu-shensha">
+                                    <h4>星宿神煞</h4>
+                                    <div class="lunar-xingsu">
+                                        <div class="xingsu-item"><span class="label">星宿：</span><span class="xingsu-content"></span></div>
+                                    </div>
+                                    <div class="lunar-pengzu">
+                                        <div class="pengzu-item"><span class="label">彭祖百忌：</span><span class="pengzu-content"></span></div>
+                                    </div>
+                                    <div class="lunar-shensha">
+                                        <div class="shensha-item"><span class="label">吉神：</span><span class="jishen-content"></span></div>
+                                        <div class="shensha-item"><span class="label">凶煞：</span><span class="xiongsha-content"></span></div>
+                                    </div>
+                                </div>
+                                <div class="lunar-section fangwei-jinji">
+                                    <h4>方位禁忌</h4>
+                                    <div class="lunar-fangwei">
+                                        <div class="fangwei-item"><span class="label">喜神：</span><span class="xishen-content"></span></div>
+                                        <div class="fangwei-item"><span class="label">阳贵神：</span><span class="yangguishen-content"></span></div>
+                                        <div class="fangwei-item"><span class="label">阴贵神：</span><span class="yinguishen-content"></span></div>
+                                        <div class="fangwei-item"><span class="label">福神：</span><span class="fushen-content"></span></div>
+                                        <div class="fangwei-item"><span class="label">财神：</span><span class="caishen-content"></span></div>
+                                    </div>
+                                    <div class="lunar-jinji">
+                                        <div class="jinji-item"><span class="label">冲：</span><span class="chong-content"></span></div>
+                                        <div class="jinji-item"><span class="label">煞：</span><span class="sha-content"></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item comment">
+                    <p class="icp"></p>
+                </div>
+            </div>
+        </aside>
+        <section class="main">
+            <div id="mainContent">
+                <div id="menu">
+                    <a href="#"><i class="ti-menu-alt"></i></a>
+                </div>
+                <div class="about box">
+                    <div class="about-content">
+                        <p><i class="ti-pencil-alt"></i>仅供公司内部使用</p>
+                    </div>
+                </div>
+
+                <footer class="footer">
+                    <div class="copyright">
+                        <div class="copyright-text">
+                            <p></p>
+                        </div>
+                        <div class="world-time">
+                            <span class="time-item"><span class="city">北京</span><span class="time" id="beijingTime">--:--</span></span>
+                            <span class="time-item"><span class="city">伦敦</span><span class="time" id="londonTime">--:--</span></span>
+                            <span class="time-item"><span class="city">荷兰</span><span class="time" id="amsterdamTime">--:--</span></span>
+                            <span class="time-item"><span class="city">纽约</span><span class="time" id="newyorkTime">--:--</span></span>
+                            <span class="time-item"><span class="city">悉尼</span><span class="time" id="sydneyTime">--:--</span></span>
+                        </div>
+                    </div>
+                </footer>
+                <div id="fixedBar">
+                    <svg class="Zi Zi--BackToTop" title="回到顶部" fill="currentColor" viewBox="0 0 24 24" width="24" height="24">
+                        <path d="M16.036 19.59a1 1 0 0 1-.997.995H9.032a.996.996 0 0 1-.997-.996v-7.005H5.03c-1.1 0-1.36-.633-.578-1.416L11.33 4.29a1.003 1.003 0 0 1 1.412 0l6.878 6.88c.782.78.523 1.415-.58 1.415h-3.004v7.005z"></path>
+                    </svg>
+                </div>
+            </div>
+        </section>
+        <script src="/static/jquery.js"></script>
+        <script src="/static/lunar/lunar.js"></script>
+        <script src="/static/nav-go.js"></script>
+    </div>
+</body>
+</html>

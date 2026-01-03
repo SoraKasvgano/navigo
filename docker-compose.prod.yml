@@ -1,0 +1,93 @@
+version: '3.8'
+
+# 生产环境 Docker Compose 配置
+# 包含资源限制、日志轮转、监控等生产级特性
+
+services:
+  navigo:
+    container_name: navigo
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: navigo:latest
+    restart: unless-stopped
+    ports:
+      - "8787:8080"
+    volumes:
+      - /home/docker/navigo/data:/app/data
+      - /home/docker/navigo/uploads:/app/uploads
+      - /home/docker/navigo/static:/app/static
+    environment:
+      - SERVER_PORT=8080
+      - SERVER_MODE=release
+      - DB_PATH=/app/data/admin.db
+      - UPLOAD_PATH=/app/uploads
+      - NAV_JSON_PATH=/app/static/nav.json
+      - TZ=Asia/Shanghai
+    networks:
+      - navigo-network
+
+    # 健康检查
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+    # 资源限制
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+
+    # 日志配置（轮转）
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels: "service=navigo"
+
+    # 安全选项
+    security_opt:
+      - no-new-privileges:true
+
+    # 只读根文件系统（排除需要写入的目录）
+    read_only: false
+    tmpfs:
+      - /tmp
+
+networks:
+  navigo-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+# 可选：如果使用 Nginx 反向代理
+# 取消注释以下内容
+#
+#  nginx:
+#    image: nginx:alpine
+#    container_name: navigo-nginx
+#    restart: unless-stopped
+#    ports:
+#      - "80:80"
+#      - "443:443"
+#    volumes:
+#      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+#      - ./nginx/ssl:/etc/nginx/ssl:ro
+#    networks:
+#      - navigo-network
+#    depends_on:
+#      - navigo
+#    logging:
+#      driver: "json-file"
+#      options:
+#        max-size: "10m"
+#        max-file: "3"

@@ -1,0 +1,1974 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台管理 - 网址导航</title>
+    <style>
+        :root {
+            --apple-blue: #007AFF;
+            --apple-secondary-bg: #2c2c2e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        /* 顶部导航 */
+        .navbar {
+            background: var(--apple-blue);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar h1 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .navbar-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .navbar-actions a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .navbar-actions a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .btn-logout {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* 主体布局 */
+        .container {
+            display: flex;
+            min-height: calc(100vh - 60px);
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            width: 220px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            padding: 20px 0;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-menu li.active {
+            border-left-color: var(--apple-blue);
+            background: #f5f7fa;
+        }
+
+        .sidebar-menu a {
+            display: block;
+            padding: 12px 20px;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .sidebar-menu a:hover {
+            background: #f5f7fa;
+            color: var(--apple-blue);
+        }
+
+        .sidebar-menu li.active a {
+            color: var(--apple-blue);
+            font-weight: 500;
+        }
+
+        /* 内容区 */
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .panel-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-header h2 {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .panel-body {
+            padding: 20px;
+        }
+
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--apple-blue);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        /* 按钮 */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--apple-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        /* 表格 */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .table th {
+            background: #f8f9fa;
+            font-weight: 500;
+            color: #666;
+        }
+
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 5px;
+        }
+
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 16px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* 列表项 */
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            background: #fafafa;
+        }
+
+        .list-item:hover {
+            border-color: var(--apple-blue);
+        }
+
+        .list-item-info {
+            flex: 1;
+        }
+
+        .list-item-title {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .list-item-desc {
+            font-size: 12px;
+            color: #999;
+            margin-top: 3px;
+        }
+
+        /* 分类卡片 */
+        .category-card {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .category-header {
+            background: #f8f9fa;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .category-header:hover {
+            background: #eef2ff;
+        }
+
+        .category-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .category-icon {
+            font-size: 18px;
+            color: var(--apple-blue);
+        }
+
+        .category-sites {
+            padding: 15px;
+            display: none;
+        }
+
+        .category-sites.active {
+            display: block;
+        }
+
+        /* 站点网格 */
+        .sites-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 10px;
+        }
+
+        .site-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            background: white;
+        }
+
+        .site-card img {
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            object-fit: cover;
+        }
+
+        .site-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .site-name {
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .site-desc {
+            font-size: 12px;
+            color: #999;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* 提示消息 */
+        .toast {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            padding: 15px 25px;
+            background: #28a745;
+            color: white;
+            border-radius: 6px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            z-index: 2000;
+            transform: translateX(150%);
+            transition: transform 0.3s;
+        }
+
+        .toast.error {
+            background: #dc3545;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        /* 文件上传 */
+        .file-upload {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .file-upload:hover {
+            border-color: var(--apple-blue);
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .file-upload-icon {
+            font-size: 40px;
+            color: #ddd;
+            margin-bottom: 10px;
+        }
+
+        /* 隐藏的面板 */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Logo预览 */
+        .logo-preview {
+            width: 100px;
+            height: 100px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+        }
+
+        .logo-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* 加载状态 */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ddd;
+            border-top-color: var(--apple-blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        /* 拖拽排序样式 */
+        .sortable-list {
+            min-height: 50px;
+        }
+
+        .drag-handle {
+            cursor: grab;
+            padding: 8px;
+            color: #999;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+        }
+
+        .drag-handle:hover {
+            color: var(--apple-blue);
+        }
+
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+
+        .list-item.dragging {
+            opacity: 0.5;
+            background: #e3e8ff;
+            border: 2px dashed var(--apple-blue);
+        }
+
+        .list-item.drag-over {
+            border-top: 3px solid var(--apple-blue);
+            margin-top: -3px;
+        }
+
+        .sort-hint {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            background: #f0f4ff;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .sort-hint::before {
+            content: "💡";
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <nav class="navbar">
+        <h1>网址导航 - 后台管理</h1>
+        <div class="navbar-actions">
+            <a href="/" target="_blank">访问前台</a>
+            <button class="btn-logout" onclick="logout()">退出登录</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li class="active" data-section="page-config"><a href="#page-config">页面配置</a></li>
+                <li data-section="announcements"><a href="#announcements">公告管理</a></li>
+                <li data-section="categories"><a href="#categories">分类管理</a></li>
+                <li data-section="sites"><a href="#sites">站点管理</a></li>
+                <li data-section="files"><a href="#files">文件管理</a></li>
+                <li data-section="data"><a href="#data">数据导入导出</a></li>
+                <li data-section="password"><a href="#password">修改密码</a></li>
+            </ul>
+        </aside>
+
+        <!-- 内容区 -->
+        <main class="content">
+            <!-- 页面配置 -->
+            <section id="page-config" class="section active">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>页面配置</h2>
+                    </div>
+                    <div class="panel-body">
+                        <form id="pageConfigForm">
+                            <div class="form-group">
+                                <label>页面标题</label>
+                                <input type="text" id="pageTitle" placeholder="网址导航">
+                            </div>
+                            <div class="form-group">
+                                <label>副标题</label>
+                                <input type="text" id="pageSubtitle" placeholder="常用网址一键直达">
+                            </div>
+                            <div class="form-group">
+                                <label>Logo (URL或上传)</label>
+                                <input type="text" id="pageLogo" placeholder="输入Logo URL或上传文件">
+                                <div class="logo-preview" id="logoPreview">
+                                    <img src="" alt="Logo预览">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>页脚文字</label>
+                                <input type="text" id="pageFooter" placeholder="CopyRight...">
+                            </div>
+                            <div class="form-group">
+                                <label>ICP备案号</label>
+                                <input type="text" id="pageIcp" placeholder="鲁ICP备xxxxx号">
+                            </div>
+                            <button type="submit" class="btn btn-primary">保存配置</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 公告管理 -->
+            <section id="announcements" class="section">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>公告配置</h2>
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label>轮播间隔 (毫秒)</label>
+                            <input type="number" id="announcementInterval" value="5000" min="1000">
+                        </div>
+                        <button class="btn btn-primary" onclick="saveAnnouncementConfig()">保存配置</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>公告列表</h2>
+                        <button class="btn btn-primary btn-sm" onclick="showAddAnnouncementModal()">+ 添加公告</button>
+                    </div>
+                    <div class="panel-body">
+                        <div id="announcementsList" class="loading">加载中</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 分类管理 -->
+            <section id="categories" class="section">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>分类列表</h2>
+                        <button class="btn btn-primary btn-sm" onclick="showAddCategoryModal()">+ 添加分类</button>
+                    </div>
+                    <div class="panel-body">
+                        <div id="categoriesList" class="loading">加载中</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 站点管理 -->
+            <section id="sites" class="section">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>站点管理</h2>
+                        <button class="btn btn-primary btn-sm" onclick="showAddSiteModal()">+ 添加站点</button>
+                    </div>
+                    <div class="panel-body">
+                        <div id="sitesContainer" class="loading">加载中</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 文件管理 -->
+            <section id="files" class="section">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>上传文件</h2>
+                    </div>
+                    <div class="panel-body">
+                        <div class="file-upload" onclick="document.getElementById('fileInput').click()">
+                            <div class="file-upload-icon">📁</div>
+                            <p>点击或拖拽文件到这里上传</p>
+                            <p style="font-size: 12px; color: #999;">支持图片、压缩包等文件</p>
+                            <input type="file" id="fileInput" onchange="uploadFile(this)">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>已上传文件</h2>
+                    </div>
+                    <div class="panel-body">
+                        <div id="filesList" class="loading">加载中</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 数据导入导出 -->
+            <section id="data" class="section">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>完整备份（推荐）</h2>
+                    </div>
+                    <div class="panel-body">
+                        <p style="font-size: 13px; color: #666; margin-bottom: 15px; padding: 10px; background: #f0f4ff; border-radius: 6px;">
+                            完整备份包含所有导航数据和上传的图片文件，打包为ZIP格式，适合完整迁移或定期备份。
+                        </p>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>导出完整备份</label>
+                                <p style="font-size: 12px; color: #999; margin-bottom: 10px;">导出数据和图片为ZIP压缩包</p>
+                                <button class="btn btn-primary" onclick="exportBackup()">导出备份 (ZIP)</button>
+                            </div>
+                            <div class="form-group">
+                                <label>导入完整备份</label>
+                                <p style="font-size: 12px; color: #999; margin-bottom: 10px;">导入ZIP格式的完整备份文件</p>
+                                <input type="file" id="importBackupFile" accept=".zip" style="display:none" onchange="importBackup(this)">
+                                <button class="btn btn-secondary" onclick="document.getElementById('importBackupFile').click()">选择ZIP文件导入</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>数据导入导出（仅JSON）</h2>
+                    </div>
+                    <div class="panel-body">
+                        <p style="font-size: 13px; color: #666; margin-bottom: 15px; padding: 10px; background: #fff8e6; border-radius: 6px;">
+                            仅导出导航数据，不包含上传的图片文件。适合快速导出数据结构。
+                        </p>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>导出数据</label>
+                                <p style="font-size: 12px; color: #999; margin-bottom: 10px;">导出所有导航数据为JSON文件</p>
+                                <button class="btn btn-primary" onclick="exportData()">导出数据 (JSON)</button>
+                            </div>
+                            <div class="form-group">
+                                <label>导入数据</label>
+                                <p style="font-size: 12px; color: #999; margin-bottom: 10px;">导入nav.json格式的数据文件</p>
+                                <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(this)">
+                                <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">选择JSON文件导入</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 修改密码 -->
+            <section id="password" class="section">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>修改密码</h2>
+                    </div>
+                    <div class="panel-body">
+                        <form id="passwordForm" onsubmit="changePassword(event)">
+                            <div class="form-group">
+                                <label>当前密码</label>
+                                <input type="password" id="oldPassword" placeholder="请输入当前密码" required>
+                            </div>
+                            <div class="form-group">
+                                <label>新密码</label>
+                                <input type="password" id="newPassword" placeholder="请输入新密码（至少6位）" required minlength="6">
+                            </div>
+                            <div class="form-group">
+                                <label>确认新密码</label>
+                                <input type="password" id="confirmPassword" placeholder="请再次输入新密码" required minlength="6">
+                            </div>
+                            <button type="submit" class="btn btn-primary">修改密码</button>
+                        </form>
+                        <p style="font-size: 12px; color: #999; margin-top: 15px;">
+                            注意：修改密码后需要重新登录
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 公告编辑模态框 -->
+    <div class="modal" id="announcementModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="announcementModalTitle">添加公告</h3>
+                <button class="modal-close" onclick="closeModal('announcementModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="announcementForm">
+                    <input type="hidden" id="announcementId">
+                    <div class="form-group">
+                        <label>时间标记</label>
+                        <input type="text" id="announcementTimestamp" placeholder="如: 2024/01/01">
+                    </div>
+                    <div class="form-group">
+                        <label>公告内容</label>
+                        <textarea id="announcementContent" rows="4" placeholder="公告内容..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('announcementModal')">取消</button>
+                <button class="btn btn-primary" onclick="saveAnnouncement()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分类编辑模态框 -->
+    <div class="modal" id="categoryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="categoryModalTitle">添加分类</h3>
+                <button class="modal-close" onclick="closeModal('categoryModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="categoryForm">
+                    <input type="hidden" id="categoryId">
+                    <div class="form-group">
+                        <label>分类ID (英文)</label>
+                        <input type="text" id="categoryIdStr" placeholder="如: company_resource">
+                    </div>
+                    <div class="form-group">
+                        <label>分类名称</label>
+                        <input type="text" id="categoryClassify" placeholder="如: 公司资源">
+                    </div>
+                    <div class="form-group">
+                        <label>图标 (Themify Icons)</label>
+                        <input type="text" id="categoryIcon" placeholder="如: ti-cloud">
+                        <p style="font-size: 12px; color: #999; margin-top: 5px;">
+                            <a href="https://themify.me/themify-icons" target="_blank">查看图标列表</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('categoryModal')">取消</button>
+                <button class="btn btn-primary" onclick="saveCategory()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 站点编辑模态框 -->
+    <div class="modal" id="siteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="siteModalTitle">添加站点</h3>
+                <button class="modal-close" onclick="closeModal('siteModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="siteForm">
+                    <input type="hidden" id="siteId">
+                    <div class="form-group">
+                        <label>所属分类</label>
+                        <select id="siteCatId"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>站点类型</label>
+                        <select id="siteType" onchange="toggleSiteTypeFields()">
+                            <option value="link">超链接</option>
+                            <option value="download">下载链接</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>站点名称</label>
+                        <input type="text" id="siteName" placeholder="站点名称">
+                    </div>
+                    <div class="form-group" id="siteLinkGroup">
+                        <label>链接地址</label>
+                        <input type="text" id="siteHref" placeholder="https://example.com">
+                    </div>
+                    <div class="form-group" id="siteFileGroup" style="display:none">
+                        <label>上传文件</label>
+                        <p style="font-size:12px;color:#999;margin-bottom:5px">支持格式: txt, pdf, ppt, pptx, xls, xlsx, doc, docx, rar, zip, 7z</p>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="uploadSiteFile()">选择文件上传</button>
+                        <input type="file" id="siteFileInput" style="display:none" accept=".txt,.pdf,.ppt,.pptx,.xls,.xlsx,.doc,.docx,.rar,.zip,.7z" onchange="handleSiteFileUpload(this)">
+                        <div id="siteFileInfo" style="margin-top:5px;font-size:12px;color:#666"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>描述</label>
+                        <input type="text" id="siteDesc" placeholder="站点描述">
+                    </div>
+                    <div class="form-group">
+                        <label>站点图标</label>
+                        <p style="font-size:12px;color:#999;margin-bottom:5px">支持格式: png, jpg, jpeg, gif, webp, ico</p>
+                        <div style="display:flex;gap:10px;align-items:flex-start">
+                            <input type="text" id="siteLogo" placeholder="图标URL" style="flex:1" oninput="previewSiteLogo()">
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="uploadSiteLogo()">上传图标</button>
+                        </div>
+                        <input type="file" id="siteLogoInput" style="display:none" accept=".png,.jpg,.jpeg,.gif,.webp,.ico" onchange="handleSiteLogoUpload(this)">
+                        <div class="logo-preview" id="siteLogoPreview" style="margin-top:10px">
+                            <img src="" alt="图标预览" style="display:none">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('siteModal')">取消</button>
+                <button class="btn btn-primary" onclick="saveSite()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 提示消息 -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // 全局数据
+        let categories = [];
+        let announcements = [];
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            initSidebar();
+            loadPageConfig();
+            loadAnnouncements();
+            loadCategories();
+            loadFiles();
+        });
+
+        // 检查登录状态
+        async function checkAuth() {
+            try {
+                const res = await fetch('/api/check-auth');
+                const data = await res.json();
+                if (!data.authenticated) {
+                    window.location.href = '/login';
+                }
+            } catch (error) {
+                window.location.href = '/login';
+            }
+        }
+
+        // 退出登录
+        async function logout() {
+            try {
+                await fetch('/api/admin/logout', { method: 'POST' });
+            } catch (error) {}
+            window.location.href = '/login';
+        }
+
+        // 侧边栏切换
+        function initSidebar() {
+            document.querySelectorAll('.sidebar-menu li').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.dataset.section;
+
+                    document.querySelectorAll('.sidebar-menu li').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+
+                    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                    document.getElementById(section).classList.add('active');
+                });
+            });
+        }
+
+        // 显示提示
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast' + (isError ? ' error' : '');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // 模态框操作
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function showModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        // ==================== 页面配置 ====================
+        async function loadPageConfig() {
+            try {
+                const res = await fetch('/api/admin/page-config');
+                const data = await res.json();
+                if (data.code === 0) {
+                    document.getElementById('pageTitle').value = data.data.title || '';
+                    document.getElementById('pageSubtitle').value = data.data.subtitle || '';
+                    document.getElementById('pageLogo').value = data.data.logo || '';
+                    document.getElementById('pageFooter').value = data.data.footer_text || '';
+                    document.getElementById('pageIcp').value = data.data.icp || '';
+                    updateLogoPreview();
+                }
+            } catch (error) {
+                showToast('加载页面配置失败', true);
+            }
+        }
+
+        function updateLogoPreview() {
+            const logo = document.getElementById('pageLogo').value;
+            const preview = document.getElementById('logoPreview').querySelector('img');
+            if (logo) {
+                preview.src = logo;
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+
+        document.getElementById('pageLogo').addEventListener('input', updateLogoPreview);
+
+        document.getElementById('pageConfigForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            try {
+                const res = await fetch('/api/admin/page-config', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        title: document.getElementById('pageTitle').value,
+                        subtitle: document.getElementById('pageSubtitle').value,
+                        logo: document.getElementById('pageLogo').value,
+                        footer_text: document.getElementById('pageFooter').value,
+                        icp: document.getElementById('pageIcp').value
+                    })
+                });
+                const data = await res.json();
+                if (data.code === 0) {
+                    showToast('保存成功');
+                } else {
+                    showToast(data.message || '保存失败', true);
+                }
+            } catch (error) {
+                showToast('保存失败', true);
+            }
+        });
+
+        // ==================== 公告管理 ====================
+        async function loadAnnouncements() {
+            const container = document.getElementById('announcementsList');
+            container.className = 'loading';
+            container.innerHTML = '加载中';
+
+            try {
+                // 加载配置
+                const configRes = await fetch('/api/admin/announcement-config');
+                const configData = await configRes.json();
+                if (configData.code === 0) {
+                    document.getElementById('announcementInterval').value = configData.data.interval || 5000;
+                }
+
+                // 加载公告列表
+                const res = await fetch('/api/admin/announcements');
+                const data = await res.json();
+
+                container.className = ''; // 移除loading类
+
+                if (data.code === 0 && data.data && data.data.length > 0) {
+                    announcements = data.data;
+                    container.innerHTML = announcements.map(ann => `
+                        <div class="list-item">
+                            <div class="list-item-info">
+                                <div class="list-item-title">${escapeHtml(ann.content)}</div>
+                                <div class="list-item-desc">${escapeHtml(ann.timestamp)}</div>
+                            </div>
+                            <div class="action-btns">
+                                <button class="btn btn-primary btn-sm" onclick="editAnnouncement(${ann.id})">编辑</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteAnnouncement(${ann.id})">删除</button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📢</div><p>暂无公告</p></div>';
+                }
+            } catch (error) {
+                container.className = '';
+                container.innerHTML = '<div class="empty-state">加载失败</div>';
+            }
+        }
+
+        async function saveAnnouncementConfig() {
+            try {
+                const res = await fetch('/api/admin/announcement-config', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        interval: parseInt(document.getElementById('announcementInterval').value)
+                    })
+                });
+                const data = await res.json();
+                if (data.code === 0) {
+                    showToast('保存成功');
+                } else {
+                    showToast(data.message || '保存失败', true);
+                }
+            } catch (error) {
+                showToast('保存失败', true);
+            }
+        }
+
+        function showAddAnnouncementModal() {
+            document.getElementById('announcementModalTitle').textContent = '添加公告';
+            document.getElementById('announcementId').value = '';
+            // 自动填充当前时间，格式：YYYY-MM-DD HH:mm
+            const now = new Date();
+            const timestamp = now.getFullYear() + '-' +
+                String(now.getMonth() + 1).padStart(2, '0') + '-' +
+                String(now.getDate()).padStart(2, '0') + ' ' +
+                String(now.getHours()).padStart(2, '0') + ':' +
+                String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('announcementTimestamp').value = timestamp;
+            document.getElementById('announcementContent').value = '';
+            showModal('announcementModal');
+        }
+
+        function editAnnouncement(id) {
+            const ann = announcements.find(a => a.id === id);
+            if (ann) {
+                document.getElementById('announcementModalTitle').textContent = '编辑公告';
+                document.getElementById('announcementId').value = ann.id;
+                document.getElementById('announcementTimestamp').value = ann.timestamp;
+                document.getElementById('announcementContent').value = ann.content;
+                showModal('announcementModal');
+            }
+        }
+
+        async function saveAnnouncement() {
+            const id = document.getElementById('announcementId').value;
+            const data = {
+                timestamp: document.getElementById('announcementTimestamp').value,
+                content: document.getElementById('announcementContent').value
+            };
+
+            try {
+                const url = id ? `/api/admin/announcements/${id}` : '/api/admin/announcements';
+                const method = id ? 'PUT' : 'POST';
+                const res = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                if (result.code === 0) {
+                    showToast('保存成功');
+                    closeModal('announcementModal');
+                    loadAnnouncements();
+                } else {
+                    showToast(result.message || '保存失败', true);
+                }
+            } catch (error) {
+                showToast('保存失败', true);
+            }
+        }
+
+        async function deleteAnnouncement(id) {
+            if (!confirm('确定要删除这条公告吗？')) return;
+            try {
+                const res = await fetch(`/api/admin/announcements/${id}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (data.code === 0) {
+                    showToast('删除成功');
+                    loadAnnouncements();
+                } else {
+                    showToast(data.message || '删除失败', true);
+                }
+            } catch (error) {
+                showToast('删除失败', true);
+            }
+        }
+
+        // ==================== 分类管理 ====================
+        async function loadCategories() {
+            const container = document.getElementById('categoriesList');
+            container.className = 'loading';
+            container.innerHTML = '加载中';
+
+            try {
+                const res = await fetch('/api/admin/categories');
+                const data = await res.json();
+
+                container.className = ''; // 移除loading类
+
+                if (data.code === 0 && data.data && data.data.length > 0) {
+                    categories = data.data;
+                    container.innerHTML = `
+                        <div class="sort-hint">拖拽左侧图标可调整分类顺序</div>
+                        <div class="sortable-list" id="categorySortable">
+                            ${categories.map(cat => `
+                                <div class="list-item" draggable="true" data-id="${cat.id}">
+                                    <div class="drag-handle" title="拖拽排序">☰</div>
+                                    <div class="list-item-info">
+                                        <div class="list-item-title"><i class="${cat.icon}"></i> ${escapeHtml(cat.classify)}</div>
+                                        <div class="list-item-desc">ID: ${escapeHtml(cat._id)}</div>
+                                    </div>
+                                    <div class="action-btns">
+                                        <button class="btn btn-primary btn-sm" onclick="editCategory(${cat.id})">编辑</button>
+                                        <button class="btn btn-danger btn-sm" onclick="deleteCategory(${cat.id})">删除</button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+
+                    // 初始化分类拖拽排序
+                    initDragSort(document.getElementById('categorySortable'), saveCategorySort);
+
+                    // 更新站点页面的分类选择
+                    updateCategorySelect();
+                    loadSites();
+                } else {
+                    container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📁</div><p>暂无分类</p></div>';
+                }
+            } catch (error) {
+                container.className = '';
+                container.innerHTML = '<div class="empty-state">加载失败</div>';
+            }
+        }
+
+        function updateCategorySelect() {
+            const select = document.getElementById('siteCatId');
+            select.innerHTML = categories.map(cat =>
+                `<option value="${cat.id}">${escapeHtml(cat.classify)}</option>`
+            ).join('');
+        }
+
+        function showAddCategoryModal() {
+            document.getElementById('categoryModalTitle').textContent = '添加分类';
+            document.getElementById('categoryId').value = '';
+            document.getElementById('categoryIdStr').value = '';
+            document.getElementById('categoryClassify').value = '';
+            document.getElementById('categoryIcon').value = 'ti-folder';
+            showModal('categoryModal');
+        }
+
+        function editCategory(id) {
+            const cat = categories.find(c => c.id === id);
+            if (cat) {
+                document.getElementById('categoryModalTitle').textContent = '编辑分类';
+                document.getElementById('categoryId').value = cat.id;
+                document.getElementById('categoryIdStr').value = cat._id;
+                document.getElementById('categoryClassify').value = cat.classify;
+                document.getElementById('categoryIcon').value = cat.icon;
+                showModal('categoryModal');
+            }
+        }
+
+        async function saveCategory() {
+            const id = document.getElementById('categoryId').value;
+            const data = {
+                _id: document.getElementById('categoryIdStr').value,
+                classify: document.getElementById('categoryClassify').value,
+                icon: document.getElementById('categoryIcon').value
+            };
+
+            try {
+                const url = id ? `/api/admin/categories/${id}` : '/api/admin/categories';
+                const method = id ? 'PUT' : 'POST';
+                const res = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                if (result.code === 0) {
+                    showToast('保存成功');
+                    closeModal('categoryModal');
+                    loadCategories();
+                } else {
+                    showToast(result.message || '保存失败', true);
+                }
+            } catch (error) {
+                showToast('保存失败', true);
+            }
+        }
+
+        async function deleteCategory(id) {
+            if (!confirm('确定要删除这个分类吗？该分类下的所有站点也会被删除！')) return;
+            try {
+                const res = await fetch(`/api/admin/categories/${id}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (data.code === 0) {
+                    showToast('删除成功');
+                    loadCategories();
+                } else {
+                    showToast(data.message || '删除失败', true);
+                }
+            } catch (error) {
+                showToast('删除失败', true);
+            }
+        }
+
+        // ==================== 站点管理 ====================
+        async function loadSites() {
+            const container = document.getElementById('sitesContainer');
+
+            if (categories.length === 0) {
+                container.className = '';
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🌐</div><p>请先创建分类</p></div>';
+                return;
+            }
+
+            container.className = 'loading';
+            container.innerHTML = '加载中';
+
+            try {
+                let html = '';
+                for (const cat of categories) {
+                    const res = await fetch(`/api/admin/categories/${cat.id}/sites`);
+                    const data = await res.json();
+                    const sites = data.code === 0 ? data.data || [] : [];
+
+                    html += `
+                        <div class="category-card">
+                            <div class="category-header" onclick="toggleCategorySites(this)">
+                                <div class="category-title">
+                                    <i class="${cat.icon} category-icon"></i>
+                                    <span>${escapeHtml(cat.classify)}</span>
+                                    <span style="color:#999;font-size:12px">(${sites.length}个站点)</span>
+                                </div>
+                                <span>▼</span>
+                            </div>
+                            <div class="category-sites">
+                                ${sites.length > 0 ? `
+                                    <div class="sort-hint">拖拽左侧图标可调整站点顺序</div>
+                                    <div class="sortable-list" id="siteSortable_${cat.id}" data-cat-id="${cat.id}">
+                                        ${sites.map(site => `
+                                            <div class="list-item" draggable="true" data-id="${site.id}">
+                                                <div class="drag-handle" title="拖拽排序">☰</div>
+                                                <div class="list-item-info" style="display:flex;align-items:center;gap:10px">
+                                                    ${site.logo ? `<img src="${site.logo}" style="width:24px;height:24px;border-radius:4px" onerror="this.style.display='none'">` : ''}
+                                                    <div>
+                                                        <div class="list-item-title">${escapeHtml(site.name)}</div>
+                                                        <div class="list-item-desc">${escapeHtml(site.href)}</div>
+                                                    </div>
+                                                </div>
+                                                <div class="action-btns">
+                                                    <button class="btn btn-primary btn-sm" onclick="editSite(${site.id}, ${cat.id})">编辑</button>
+                                                    <button class="btn btn-danger btn-sm" onclick="deleteSite(${site.id})">删除</button>
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                ` : '<div class="empty-state" style="padding:20px"><p>暂无站点</p></div>'}
+                            </div>
+                        </div>
+                    `;
+                }
+                container.className = ''; // 移除loading类
+                container.innerHTML = html;
+
+                // 初始化每个分类下的站点拖拽排序
+                for (const cat of categories) {
+                    const sortableEl = document.getElementById(`siteSortable_${cat.id}`);
+                    if (sortableEl) {
+                        initDragSort(sortableEl, () => saveSiteSort(cat.id));
+                    }
+                }
+            } catch (error) {
+                container.className = '';
+                container.innerHTML = '<div class="empty-state">加载失败</div>';
+            }
+        }
+
+        function toggleCategorySites(header) {
+            const sites = header.nextElementSibling;
+            sites.classList.toggle('active');
+        }
+
+        // 切换站点类型显示
+        function toggleSiteTypeFields() {
+            const siteType = document.getElementById('siteType').value;
+            const linkGroup = document.getElementById('siteLinkGroup');
+            const fileGroup = document.getElementById('siteFileGroup');
+
+            if (siteType === 'link') {
+                linkGroup.style.display = 'block';
+                fileGroup.style.display = 'none';
+            } else {
+                linkGroup.style.display = 'none';
+                fileGroup.style.display = 'block';
+            }
+        }
+
+        // 预览站点图标
+        function previewSiteLogo() {
+            const logo = document.getElementById('siteLogo').value;
+            const preview = document.getElementById('siteLogoPreview').querySelector('img');
+            if (logo) {
+                preview.src = logo;
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+
+        // 上传站点图标
+        function uploadSiteLogo() {
+            document.getElementById('siteLogoInput').click();
+        }
+
+        // 处理站点图标上传
+        async function handleSiteLogoUpload(input) {
+            if (!input.files || !input.files[0]) return;
+
+            const file = input.files[0];
+            const allowedTypes = ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/x-icon', 'image/vnd.microsoft.icon'];
+            const allowedExts = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.ico'];
+            const ext = '.' + file.name.split('.').pop().toLowerCase();
+
+            if (!allowedExts.includes(ext)) {
+                showToast('不支持的图片格式，请上传 png, jpg, jpeg, gif, webp, ico 格式', true);
+                input.value = '';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('type', 'logo');
+
+            try {
+                const res = await fetch('/api/admin/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (data.code === 0) {
+                    document.getElementById('siteLogo').value = data.data.url;
+                    previewSiteLogo();
+                    showToast('图标上传成功');
+                } else {
+                    showToast(data.message || '上传失败', true);
+                }
+            } catch (error) {
+                showToast('上传失败', true);
+            }
+            input.value = '';
+        }
+
+        function showAddSiteModal() {
+            document.getElementById('siteModalTitle').textContent = '添加站点';
+            document.getElementById('siteId').value = '';
+            document.getElementById('siteCatId').value = categories[0]?.id || '';
+            document.getElementById('siteType').value = 'link';
+            document.getElementById('siteName').value = '';
+            document.getElementById('siteHref').value = '';
+            document.getElementById('siteDesc').value = '';
+            document.getElementById('siteLogo').value = '';
+            document.getElementById('siteFileInfo').textContent = '';
+            document.getElementById('siteLogoPreview').querySelector('img').style.display = 'none';
+            toggleSiteTypeFields();
+            showModal('siteModal');
+        }
+
+        async function editSite(id, catId) {
+            try {
+                const res = await fetch(`/api/admin/sites/${id}`);
+                const data = await res.json();
+                if (data.code === 0) {
+                    const site = data.data;
+                    document.getElementById('siteModalTitle').textContent = '编辑站点';
+                    document.getElementById('siteId').value = site.id;
+                    document.getElementById('siteCatId').value = site.cat_id || catId;
+                    document.getElementById('siteName').value = site.name;
+                    document.getElementById('siteHref').value = site.href;
+                    document.getElementById('siteDesc').value = site.desc || '';
+                    document.getElementById('siteLogo').value = site.logo || '';
+
+                    // 判断站点类型：如果href是上传的文件路径则为下载类型
+                    const isDownload = site.href && site.href.startsWith('/uploads/');
+                    document.getElementById('siteType').value = isDownload ? 'download' : 'link';
+                    if (isDownload) {
+                        document.getElementById('siteFileInfo').textContent = '当前文件: ' + site.href.split('/').pop();
+                    } else {
+                        document.getElementById('siteFileInfo').textContent = '';
+                    }
+
+                    toggleSiteTypeFields();
+                    previewSiteLogo();
+                    showModal('siteModal');
+                }
+            } catch (error) {
+                showToast('加载站点信息失败', true);
+            }
+        }
+
+        async function saveSite() {
+            const id = document.getElementById('siteId').value;
+            const data = {
+                cat_id: parseInt(document.getElementById('siteCatId').value),
+                name: document.getElementById('siteName').value,
+                href: document.getElementById('siteHref').value,
+                desc: document.getElementById('siteDesc').value,
+                logo: document.getElementById('siteLogo').value
+            };
+
+            try {
+                const url = id ? `/api/admin/sites/${id}` : '/api/admin/sites';
+                const method = id ? 'PUT' : 'POST';
+                const res = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                if (result.code === 0) {
+                    showToast('保存成功');
+                    closeModal('siteModal');
+                    loadSites();
+                } else {
+                    showToast(result.message || '保存失败', true);
+                }
+            } catch (error) {
+                showToast('保存失败', true);
+            }
+        }
+
+        async function deleteSite(id) {
+            if (!confirm('确定要删除这个站点吗？')) return;
+            try {
+                const res = await fetch(`/api/admin/sites/${id}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (data.code === 0) {
+                    showToast('删除成功');
+                    loadSites();
+                } else {
+                    showToast(data.message || '删除失败', true);
+                }
+            } catch (error) {
+                showToast('删除失败', true);
+            }
+        }
+
+        function uploadSiteFile() {
+            document.getElementById('siteFileInput').click();
+        }
+
+        async function handleSiteFileUpload(input) {
+            if (!input.files || !input.files[0]) return;
+
+            const file = input.files[0];
+            const allowedExts = ['.txt', '.pdf', '.ppt', '.pptx', '.xls', '.xlsx', '.doc', '.docx', '.rar', '.zip', '.7z'];
+            const ext = '.' + file.name.split('.').pop().toLowerCase();
+
+            if (!allowedExts.includes(ext)) {
+                showToast('不支持的文件格式，请上传 txt, pdf, ppt, pptx, xls, xlsx, doc, docx, rar, zip, 7z 格式', true);
+                input.value = '';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('type', 'document');
+
+            try {
+                const res = await fetch('/api/admin/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (data.code === 0) {
+                    document.getElementById('siteHref').value = data.data.url;
+                    document.getElementById('siteFileInfo').textContent = '已上传: ' + file.name;
+                    showToast('文件上传成功');
+                } else {
+                    showToast(data.message || '上传失败', true);
+                }
+            } catch (error) {
+                showToast('上传失败', true);
+            }
+            input.value = '';
+        }
+
+        // ==================== 文件管理 ====================
+        async function loadFiles() {
+            const container = document.getElementById('filesList');
+            container.className = 'loading';
+            container.innerHTML = '加载中';
+
+            try {
+                const res = await fetch('/api/admin/files');
+                const data = await res.json();
+
+                container.className = ''; // 移除loading类
+
+                if (data.code === 0 && data.data && data.data.length > 0) {
+                    container.innerHTML = `
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>文件名</th>
+                                    <th>大小</th>
+                                    <th>上传时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${data.data.map(file => `
+                                    <tr>
+                                        <td><a href="${file.url}" target="_blank">${escapeHtml(file.name)}</a></td>
+                                        <td>${formatFileSize(file.size)}</td>
+                                        <td>${file.uploaded_at || '-'}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-secondary" onclick="copyToClipboard('${file.url}')">复制链接</button>
+                                            <button class="btn btn-sm btn-danger" onclick="deleteFile('${file.name}')">删除</button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                } else {
+                    container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📂</div><p>暂无文件</p></div>';
+                }
+            } catch (error) {
+                container.className = '';
+                container.innerHTML = '<div class="empty-state">加载失败</div>';
+            }
+        }
+
+        async function uploadFile(input) {
+            if (!input.files || !input.files[0]) return;
+
+            const formData = new FormData();
+            formData.append('file', input.files[0]);
+
+            try {
+                const res = await fetch('/api/admin/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (data.code === 0) {
+                    showToast('上传成功');
+                    loadFiles();
+                } else {
+                    showToast(data.message || '上传失败', true);
+                }
+            } catch (error) {
+                showToast('上传失败', true);
+            }
+            input.value = '';
+        }
+
+        async function deleteFile(filename) {
+            if (!confirm('确定要删除这个文件吗？')) return;
+            try {
+                const res = await fetch('/api/admin/upload?filename=' + encodeURIComponent(filename), {
+                    method: 'DELETE'
+                });
+                const data = await res.json();
+                if (data.code === 0) {
+                    showToast('删除成功');
+                    loadFiles();
+                } else {
+                    showToast(data.message || '删除失败', true);
+                }
+            } catch (error) {
+                showToast('删除失败', true);
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(window.location.origin + text).then(() => {
+                showToast('链接已复制');
+            }).catch(() => {
+                showToast('复制失败', true);
+            });
+        }
+
+        // ==================== 数据导入导出 ====================
+        function exportData() {
+            window.location.href = '/api/admin/export';
+        }
+
+        // 导出完整备份（ZIP格式，包含图片）
+        function exportBackup() {
+            showToast('正在准备备份文件...');
+            window.location.href = '/api/admin/backup/export';
+        }
+
+        // 导入完整备份（ZIP格式）
+        async function importBackup(input) {
+            if (!input.files || !input.files[0]) return;
+
+            const file = input.files[0];
+            if (!file.name.toLowerCase().endsWith('.zip')) {
+                showToast('请选择ZIP格式的备份文件', true);
+                input.value = '';
+                return;
+            }
+
+            if (!confirm('导入备份将覆盖现有的所有数据和图片，确定继续吗？')) {
+                input.value = '';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                showToast('正在导入备份，请稍候...');
+                const res = await fetch('/api/admin/backup/import', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await res.json();
+                if (result.code === 0) {
+                    showToast('备份导入成功');
+                    // 重新加载所有数据
+                    loadCategories();
+                    loadAnnouncements();
+                    loadFiles();
+                } else {
+                    showToast(result.message || '备份导入失败', true);
+                }
+            } catch (error) {
+                showToast('备份导入失败: ' + error.message, true);
+            }
+            input.value = '';
+        }
+
+        async function importData(input) {
+            if (!input.files || !input.files[0]) return;
+
+            if (!confirm('导入将覆盖现有数据，确定继续吗？')) {
+                input.value = '';
+                return;
+            }
+
+            try {
+                const text = await input.files[0].text();
+                const data = JSON.parse(text);
+
+                const res = await fetch('/api/admin/import', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                if (result.code === 0) {
+                    showToast('导入成功');
+                    loadCategories();
+                    loadAnnouncements();
+                } else {
+                    showToast(result.message || '导入失败', true);
+                }
+            } catch (error) {
+                showToast('导入失败: ' + error.message, true);
+            }
+            input.value = '';
+        }
+
+        // ==================== 工具函数 ====================
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatFileSize(bytes) {
+            if (!bytes) return '-';
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / 1024 / 1024).toFixed(1) + ' MB';
+        }
+
+        // ==================== 修改密码 ====================
+        async function changePassword(event) {
+            event.preventDefault();
+
+            const oldPassword = document.getElementById('oldPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // 前端验证
+            if (newPassword.length < 6) {
+                showToast('新密码长度不能少于6位', true);
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                showToast('两次输入的新密码不一致', true);
+                return;
+            }
+
+            if (oldPassword === newPassword) {
+                showToast('新密码不能与旧密码相同', true);
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/admin/change-password', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        old_password: oldPassword,
+                        new_password: newPassword,
+                        confirm_password: confirmPassword
+                    })
+                });
+                const data = await res.json();
+                if (data.code === 0) {
+                    showToast('密码修改成功，即将跳转到登录页面');
+                    // 清空表单
+                    document.getElementById('passwordForm').reset();
+                    // 2秒后跳转到登录页
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 2000);
+                } else {
+                    showToast(data.message || '密码修改失败', true);
+                }
+            } catch (error) {
+                showToast('密码修改失败', true);
+            }
+        }
+
+        // ==================== 拖拽排序 ====================
+        function initDragSort(container, onSortEnd) {
+            let draggedItem = null;
+
+            container.querySelectorAll('.list-item').forEach(item => {
+                // 拖拽开始
+                item.addEventListener('dragstart', function(e) {
+                    draggedItem = this;
+                    this.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/html', this.innerHTML);
+                });
+
+                // 拖拽结束
+                item.addEventListener('dragend', function() {
+                    this.classList.remove('dragging');
+                    container.querySelectorAll('.list-item').forEach(i => i.classList.remove('drag-over'));
+                    draggedItem = null;
+                    // 触发排序保存回调
+                    if (onSortEnd) onSortEnd();
+                });
+
+                // 拖拽经过
+                item.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    if (this !== draggedItem) {
+                        this.classList.add('drag-over');
+                    }
+                });
+
+                // 拖拽离开
+                item.addEventListener('dragleave', function() {
+                    this.classList.remove('drag-over');
+                });
+
+                // 放置
+                item.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('drag-over');
+                    if (this !== draggedItem && draggedItem) {
+                        // 判断放置位置
+                        const rect = this.getBoundingClientRect();
+                        const midY = rect.top + rect.height / 2;
+                        if (e.clientY < midY) {
+                            container.insertBefore(draggedItem, this);
+                        } else {
+                            container.insertBefore(draggedItem, this.nextSibling);
+                        }
+                    }
+                });
+            });
+        }
+
+        // 保存分类排序
+        async function saveCategorySort() {
+            const container = document.getElementById('categorySortable');
+            if (!container) return;
+
+            const items = container.querySelectorAll('.list-item');
+            const sortData = [];
+            items.forEach((item, index) => {
+                sortData.push({
+                    id: parseInt(item.dataset.id),
+                    sort_no: index + 1
+                });
+            });
+
+            try {
+                const res = await fetch('/api/admin/categories/sort', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ items: sortData })
+                });
+                const data = await res.json();
+                if (data.code === 0) {
+                    showToast('排序已保存');
+                    // 更新本地categories数组的顺序
+                    const newCategories = [];
+                    sortData.forEach(s => {
+                        const cat = categories.find(c => c.id === s.id);
+                        if (cat) newCategories.push(cat);
+                    });
+                    categories = newCategories;
+                    updateCategorySelect();
+                } else {
+                    showToast(data.message || '保存排序失败', true);
+                }
+            } catch (error) {
+                showToast('保存排序失败', true);
+            }
+        }
+
+        // 保存站点排序
+        async function saveSiteSort(catId) {
+            const container = document.getElementById(`siteSortable_${catId}`);
+            if (!container) return;
+
+            const items = container.querySelectorAll('.list-item');
+            const sortData = [];
+            items.forEach((item, index) => {
+                sortData.push({
+                    id: parseInt(item.dataset.id),
+                    sort_no: index + 1
+                });
+            });
+
+            try {
+                const res = await fetch('/api/admin/sites/sort', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ items: sortData })
+                });
+                const data = await res.json();
+                if (data.code === 0) {
+                    showToast('排序已保存');
+                } else {
+                    showToast(data.message || '保存排序失败', true);
+                }
+            } catch (error) {
+                showToast('保存排序失败', true);
+            }
+        }
+    </script>
+</body>
+</html>

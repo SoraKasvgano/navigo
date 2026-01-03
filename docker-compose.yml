@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  navigo:
+    container_name: navigo
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: navigo:latest
+    restart: unless-stopped
+    ports:
+      - "8787:8080"
+    volumes:
+      - /home/docker/navigo/data:/app/data
+      - /home/docker/navigo/uploads:/app/uploads
+      - /home/docker/navigo/static:/app/static
+    environment:
+      - SERVER_PORT=8080
+      - SERVER_MODE=release
+      - DB_PATH=/app/data/admin.db
+      - UPLOAD_PATH=/app/uploads
+      - NAV_JSON_PATH=/app/static/nav.json
+      - TZ=Asia/Shanghai
+    networks:
+      - navigo-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  navigo-network:
+    driver: bridge
